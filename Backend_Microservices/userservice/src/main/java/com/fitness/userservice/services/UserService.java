@@ -13,6 +13,22 @@ public class UserService {
 
     private final UserRepository repository;
 
+
+    public UserResponse getUserProfile(String userId){
+        User user = repository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
+
+        UserResponse response = new UserResponse();
+        response.setId(user.getId());
+        response.setPassword(user.getPassword());
+        response.setEmail(user.getEmail());
+        response.setFirstName(user.getPassword());
+        response.setLastName(user.getLastName());
+        response.setCreatedAt(user.getCreatedAt());
+        response.setUpdatedAt(user.getUpdatedAt());
+
+        return response;
+    }
+
     public UserResponse register(RegisterRequest request) {
 
         if (repository.existsByEmail(request.getEmail())){
