@@ -21,7 +21,7 @@ public class Activity {
 
     private String id;
     private String userId;
-    private ActivityTime type;
+    private ActivityType type;
     private Integer duration;
     private Integer calories;
     private LocalDateTime startTime;
