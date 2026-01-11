@@ -1,10 +1,10 @@
 spring:
   application:
-    name: activityservice
+    name: aiservice
   data:
     mongodb:
-      uri: mongodb://localhost:27017/aiactivityfitness
-      database: aiactivityfitness
+      uri: mongodb://localhost:27017/airecommendationfitness
+      database: airecommendationfitness
 
 eureka:
   client:
@@ -12,5 +12,4 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
 
 server:
-  port: 8082
-
+  port: 8083
