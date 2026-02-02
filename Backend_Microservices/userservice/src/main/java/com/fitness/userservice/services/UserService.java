@@ -49,6 +49,7 @@ public class UserService {
         User user = new User();
         user.setEmail(request.getEmail());
         user.setFirstName(request.getFirstName());
+        user.setKeycloakId(request.getKeycloakId());
         user.setLastName(request.getLastName());
         user.setPassword(request.getPassword());
 
@@ -56,6 +57,7 @@ public class UserService {
         UserResponse response = new UserResponse();
         response.setId(savedUser.getId());
         response.setPassword(savedUser.getPassword());
+        response.setKeycloakId(savedUser.getKeycloakId());
         response.setEmail(savedUser.getEmail());
         response.setFirstName(savedUser.getPassword());
         response.setLastName(savedUser.getLastName());
