@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -45,13 +48,24 @@ public class ActivityService {
 
 
         Activity savedActivity = activityRepository.save(activity);
-        try{
-
-            kafkaTemplate.send(topicName,savedActivity.getUserId(),savedActivity);
-        }catch(Exception e){
+        
+        // Send to Kafka asynchronously (non-blocking) to prevent Kafka outages from failing activity saves
+        try {
+            kafkaTemplate.send(topicName, savedActivity.getUserId(), savedActivity)
+                .whenComplete((result, ex) -> {
+                    if (ex != null) {
+                        // Log error but don't fail the request
+                        System.err.println("Failed to send activity to Kafka: " + ex.getMessage());
+                        ex.printStackTrace();
+                    } else {
+                        System.out.println("Activity sent to Kafka successfully");
+                    }
+                });
+        } catch (Exception e) {
+            // Catch any immediate exceptions and log them without failing the request
+            System.err.println("Error sending activity to Kafka: " + e.getMessage());
             e.printStackTrace();
         }
-
 
         return mapToResponse(savedActivity);
     }
@@ -69,5 +83,15 @@ public class ActivityService {
         response.setUpdatedAt(activity.getUpdatedAt());
 
         return response;
+    }
+
+    public List<ActivityResponse> getUserActivities(String userId) {
+
+        List<Activity> activityList = activityRepository.findByUserId(userId);
+
+        return activityList.stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+
     }
 }
